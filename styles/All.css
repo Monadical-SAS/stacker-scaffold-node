@@ -1,0 +1,147 @@
+/* General layout */
+
+body {
+    background-image: url("../public/img/table.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    display: grid;
+    grid-auto-rows: min-content;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    min-height: 100vh;
+}
+
+h1 {
+    color: white;
+    -webkit-text-stroke: 2px black;
+    font-size: 4rem;
+    font-family: "Impact";
+    text-align: center;
+    margin: 10px;
+}
+
+/* Action buttons */
+
+.actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    width: 520px;
+    height: 60px;
+    margin: 10px;
+}
+
+.home-actions {
+    display: flex;
+    font-family: "Helvetica Neue", sans-serif;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-top: 50px;
+    width: 520px;
+}
+
+.join-game button {
+    background-color: rgb(19, 71, 37);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 20px;
+}
+
+.join-game {
+    font-family: "Helvetica Neue", sans-serif;
+    margin-top: 10px;
+    display: flex;
+}
+
+.join-game input {
+    height: 90%;
+}
+
+.action {
+    color: rgb(19, 71, 37);
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 300;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 20px;
+}
+
+.action:hover {
+    background-color: rgb(19, 71, 37);
+    color: white;
+    font-weight: 700;
+}
+
+.action[href=""] {
+    display: none;
+}
+
+/* Connect Four board */
+
+.board {
+    background-color: rgb(10, 177, 113);
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+    border-color: black;
+    border-style: solid;
+    border-width: 10px 10px 10px 10px;
+}
+
+/*.board::after,*/
+.board::before {
+    background-color: rgb(10, 177, 113);
+    content: "";
+    height: 530px;
+    width: 20px;
+    position: absolute;
+}
+
+.board::before {
+    left: -20px;
+}
+
+/*.board::after {*/
+/*    right: -20px;*/
+/*}*/
+
+.row {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+}
+
+.cell {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+}
+
+.empty {
+    background-color: white;
+}
+
+.empty:hover {
+    background-color: lightgray;
+}
+
+.red {
+    background-color: red;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.unavailable {
+    background-color: #b4b0b0;
+}
