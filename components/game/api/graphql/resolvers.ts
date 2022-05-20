@@ -6,6 +6,9 @@ import { toGameResponse } from '../utils';
 import { Game } from '../../lib';
 import { GameResponse, MoveInput } from '../types';
 import { GameId, Move } from '../../types';
+import { queryGame, saveGame as saveDbGame } from '../../db/queries';
+import { fromDbGame, toDbGame } from '../../db/utils';
+import { from } from '@apollo/client';
 
 
 
@@ -14,15 +17,22 @@ const games: {
 } = {
 
 }
-const initGame = () => {
+const initGame = async (): Promise<[Game, GameId]> => {
+  // a bit too elaborate but it's fine
   const game = new Game();
-  const id = uuidv4() as GameId;
-  games[id] = game;
-  return toGameResponse(id, game);
+  const dbGame = await saveDbGame(undefined, toDbGame(game));
+  return [fromDbGame(dbGame), dbGame.id];
 }
 
-const getGame = (id: GameId) => {
-  return games[id];
+const getGame = async (id: GameId): Promise<Game> => {
+  const dbGame = await queryGame(id);
+  if (!dbGame) throw new Error(`No game ${id || "OF EMPTY ID"}`);
+  return fromDbGame(dbGame);
+}
+
+const saveGame = async (id: GameId, game: Game): Promise<Game> => {
+  const dbGame = await saveDbGame(id, toDbGame(game));
+  return fromDbGame(dbGame);
 }
 
 type PS = {
@@ -33,21 +43,23 @@ const bus = createPubSub<PS>();
 
 export const resolvers = {
   Query: {
-    game: (d: any, { id }: { id: GameId }): GameResponse => {
-      const game = getGame(id);
+    game: async (d: any, { id }: { id: GameId }): Promise<GameResponse> => {
+      const game = await getGame(id);
       return toGameResponse(id, game);
     },
   },
   Mutation: {
-    makeMove: (_: any, { move }: { move: MoveInput }): GameResponse => {
-      const game = getGame(move.gameId);
+    makeMove: async (_: any, { move }: { move: MoveInput }): Promise<GameResponse> => {
+      const game = await getGame(move.gameId);
       game.makeMove(move);
-      const r = toGameResponse(move.gameId, game);
+      const updatedGame = await saveGame(move.gameId, game);
+      const r = toGameResponse(move.gameId, updatedGame);
       bus.publish("game", r);
       return r;
     },
-    initGame: (): GameResponse => {
-      return initGame();
+    initGame: async (): Promise<GameResponse> => {
+      const [game, id] = await initGame();
+      return toGameResponse(id, game);
     }
   },
   Subscription: {
