@@ -28,6 +28,7 @@ const Cell = ({
   }, [onMove, columnIndex, rowIndex]);
   return (
     <div
+      data-testid={`cell-${hashCoords(columnIndex, rowIndex)}`}
       className={cx(
         "cell",
         {
@@ -41,14 +42,15 @@ const Cell = ({
   );
 };
 
-const Board = ({
+export const hashCoords = (x: X, y: Y) => `x:${x}:y:${y}`;
+
+export const Board = ({
   onMove,
   game,
 }: WithOnMove & {
   game: GameResponse;
 }) => {
   const possibleCoords = game.possibleCoords;
-  const hashCoords = (x: X, y: Y) => `x:${x}:y:${y}`;
   const possibleCoordsSet = useMemo(
     () => new Set(possibleCoords.map(({ x, y }) => hashCoords(x, y))),
     [possibleCoords]

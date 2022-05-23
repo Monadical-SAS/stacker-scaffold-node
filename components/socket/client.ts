@@ -1,5 +1,4 @@
-import io from "Socket.IO-client";
-import { Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 let socket: Socket;
 let fetchPromise: Promise<void>;

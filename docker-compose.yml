@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+
+  nextjs:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: side-stacker-node-nextjs
+    environment:
+      - ENV
+    volumes:
+      - ./:/app
+      - /app/node_modules # node_modules binaries differ for user machine and a docker machine; explicitly mask node_modules
+    ports:
+      - 3000:3000
+    # command: python3 src/side_stacker/sanic_app.py

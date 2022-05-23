@@ -1,5 +1,5 @@
 import { GameId } from "../../types";
-import { Server } from "socket.io";
+import type { Server } from "socket.io";
 import { queryGame } from "../../db/queries";
 import { fromDbGame } from "../../db/utils";
 import { toGameResponse } from "../utils";
