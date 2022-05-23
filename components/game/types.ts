@@ -8,13 +8,13 @@ export interface Coords {
   y: Y;
 }
 
-type Brand<K, T> = K & { __brand: T }
+type Brand<K, T> = K & { __brand: T };
 
 export type Player1 = Brand<1, "p1">;
 export type Player2 = Brand<2, "p1">;
 export type Player = Player1 | Player2;
-export type X = Brand<0|1|2|3|4|5|6, "X">;
-export type Y = Brand<0|1|2|3|4|5|6, "Y">;
+export type X = Brand<0 | 1 | 2 | 3 | 4 | 5 | 6, "X">;
+export type Y = Brand<0 | 1 | 2 | 3 | 4 | 5 | 6, "Y">;
 export type Empty = Brand<0, "Empty">;
 export type Cell = Player | Empty;
 export type Field = Cell[][];

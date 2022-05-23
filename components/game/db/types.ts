@@ -1,5 +1,4 @@
-import { GameId } from '../types';
-
+import { GameId } from "../types";
 
 export interface DbGame {
   id: GameId;

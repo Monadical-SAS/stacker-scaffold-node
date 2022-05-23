@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
-import React, { SyntheticEvent, useCallback, useState } from 'react';
-import { GameId, Player } from './game/types';
-import { PLAYER1, PLAYER2 } from './game/constants';
-import { useInitGame } from './game/api/useInitGame';
+import React, { SyntheticEvent, useCallback, useState } from "react";
+import { GameId, Player } from "./game/types";
+import { PLAYER1, PLAYER2 } from "./game/constants";
+import { useInitGame } from "./game/api/useInitGame";
 
 const useRedirectToGame = () => {
   const router = useRouter();
@@ -18,27 +18,33 @@ const useCreateGame = () => {
   const { mutate, loading } = useInitGame();
   return useCallback(async () => {
     if (loading) return;
-    const { data, errors } = await mutate();
-    if (errors) {
-      console.error(errors);
-      return;
-    }
-    return data!.initGame.id;
+    return mutate();
   }, [mutate, loading]);
 };
 
 export function HomePage() {
   const redirectToGame = useRedirectToGame();
-  const [playerForExistingGameInput, setPlayerForExistingGame] = useState(`${PLAYER1}`);
+  const [playerForExistingGameInput, setPlayerForExistingGame] = useState(
+    `${PLAYER1}`
+  );
   const [playerForNewGameInput, setPlayerForNewGame] = useState(`${PLAYER1}`);
-  const handlePlayerForNewGameChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPlayerForNewGame(e.currentTarget.value as any);
-  }, [setPlayerForNewGame]);
-  const handlePlayerForExistingGameChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPlayerForExistingGame(e.currentTarget.value as any);
-  }, [setPlayerForNewGame]);
+  const handlePlayerForNewGameChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setPlayerForNewGame(e.currentTarget.value as any);
+    },
+    [setPlayerForNewGame]
+  );
+  const handlePlayerForExistingGameChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setPlayerForExistingGame(e.currentTarget.value as any);
+    },
+    [setPlayerForExistingGame]
+  );
   const playerForNewGame = parseInt(playerForNewGameInput, 10) as Player;
-  const playerForExistingGame = parseInt(playerForExistingGameInput!, 10) as Player;
+  const playerForExistingGame = parseInt(
+    playerForExistingGameInput!,
+    10
+  ) as Player;
   const [idOfExistingGame, setIdOfExistingGame] = useState("");
   const createGame = useCreateGame();
   const handleJoinGameSubmit = useCallback(
@@ -47,7 +53,7 @@ export function HomePage() {
       const gameId = await createGame();
       redirectToGame(gameId!, playerForNewGame);
     },
-    [createGame, playerForNewGame]
+    [createGame, playerForNewGame, redirectToGame]
   );
   const handleRedirectToGame = useCallback(
     async (e: SyntheticEvent) => {
@@ -63,7 +69,10 @@ export function HomePage() {
       <div className="home-actions">
         <form className="join-game" onSubmit={handleJoinGameSubmit}>
           <div className="form-group">
-            <select defaultValue={playerForNewGameInput} onChange={handlePlayerForNewGameChange}>
+            <select
+              defaultValue={playerForNewGameInput}
+              onChange={handlePlayerForNewGameChange}
+            >
               <option value={`${PLAYER1}`}>First Player</option>
               <option value={`${PLAYER2}`}>Second Player</option>
             </select>
@@ -75,7 +84,10 @@ export function HomePage() {
         <p>-- or --</p>
         <form className="join-game" onSubmit={handleRedirectToGame}>
           <div className="form-group">
-            <select defaultValue={playerForExistingGameInput} onChange={handlePlayerForExistingGameChange}>
+            <select
+              defaultValue={playerForExistingGameInput}
+              onChange={handlePlayerForExistingGameChange}
+            >
               <option value={`${PLAYER1}`}>First Player</option>
               <option value={`${PLAYER2}`}>Second Player</option>
             </select>

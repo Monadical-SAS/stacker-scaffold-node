@@ -1,11 +1,25 @@
-import { useMutation } from '@apollo/client';
-import { INIT_GAME } from './graphql/queries';
-import { GameResponse } from './types';
+import { useCallback, useState } from "react";
+import { GameId } from "../types";
 
 export const useInitGame = () => {
-  const [mutate, others] = useMutation<{initGame: GameResponse}>(INIT_GAME);
+  const [loading, setLoading] = useState(false);
+  const init = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/game/init", {
+        method: "POST",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err);
+      }
+      return (await res.json()) as GameId;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   return {
-    ...others,
-    mutate
-  }
-}
+    loading,
+    mutate: init,
+  };
+};
