@@ -32,4 +32,31 @@ or in Docker
 
 ORM is [Prisma](http://prisma.io).
 
-To add a migration, you could change your data schema in prisma/schema.prisma and run `npx prisma migrate dev` again
+To add a migration, you could change your data schema in prisma/schema.prisma and run `npx prisma migrate dev` again (or its Docker counterpart `docker-compose exec --workdir=/app nextjs npx prisma migrate dev`)
+
+i.e. `prisma/schema.prisma`:
+
+Before:
+```
+model Game {
+  id   String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  field     String
+}
+```
+
+After:
+```
+model Game {
+  id   String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  field     String
+  myNewColumn String
+}
+```
+
+Running `docker-compose exec --workdir=/app nextjs npx prisma migrate dev` will add a new migration and migrate the db schema.
+
+!! Don't forget to commit it into the repo so we can run your app !!
