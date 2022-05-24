@@ -11,7 +11,7 @@ The project is mounted with Docker and thus, to install it you should just use b
 4. Run migrations (The container must be running): `docker-compose exec --workdir=/app nextjs npx prisma migrate dev`. prisma/games.db file should appear.
 5. Run tests (The container must be running): `docker-compose exec --workdir=/app nextjs yarn test_docker`
 7. You can run `docker-compose exec nextjs bash` to have a shell inside the container.
-9. Then to play it you just have to go to `0.0.0.0:3000` in your browser (Requires the container running)
+9. Then to play it you just have to go to `http://localhost:3000` in your browser (Requires the container running)
 
 ## Adding frontend packages when running with Docker
 
