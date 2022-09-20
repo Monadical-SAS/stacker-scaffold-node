@@ -1,6 +1,6 @@
 import { useGame } from "./api/useGame";
 import { useMove } from "./api/useMove";
-import { Cell, X, Y } from "./types";
+import { Cell, X, Y, PlayerName } from "./types";
 import { useCallback, useMemo } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
@@ -14,6 +14,8 @@ interface CellProps extends WithOnMove {
   columnIndex: X;
   player: Cell;
   available: boolean;
+  playerOneName: PlayerName;
+  playerTwoName: PlayerName;
 }
 
 const Cell = ({
@@ -22,6 +24,8 @@ const Cell = ({
   onMove,
   player,
   available,
+  playerOneName,
+  playerTwoName,
 }: CellProps) => {
   const handleClick = useCallback(() => {
     onMove(columnIndex, rowIndex);
@@ -34,7 +38,11 @@ const Cell = ({
         {
           empty: !player,
         },
-        player === 1 ? "red" : player === 2 ? "yellow" : null,
+        player === playerOneName
+          ? "red"
+          : player === playerTwoName
+          ? "yellow"
+          : null,
         !available && !player && "unavailable"
       )}
       onClick={handleClick}
@@ -82,6 +90,8 @@ export const Board = ({
                 onMove={handleOnMove}
                 player={game.field[ri][ci]}
                 available={isPossible(x, y)}
+                playerOneName={game.playerOneName}
+                playerTwoName={game.playerTwoName}
               />
             );
           })}

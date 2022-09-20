@@ -1,4 +1,4 @@
-import { GameId, Move } from "../../types";
+import { GameId, Move, PlayerName } from "../../types";
 import { Game } from "../../lib";
 import { queryGame, saveGame as saveDbGame } from "../../db/queries";
 import { fromDbGame, toDbGame } from "../../db/utils";
@@ -14,9 +14,11 @@ export const saveGame = async (id: GameId, game: Game): Promise<Game> => {
   return fromDbGame(dbGame);
 };
 
-export const initGame = async (): Promise<[Game, GameId]> => {
+export const initGame = async (
+  playerOneName?: PlayerName
+): Promise<[Game, GameId]> => {
   // a bit too elaborate but it's fine
-  const game = new Game();
+  const game = new Game(undefined, playerOneName);
   const dbGame = await saveDbGame(undefined, toDbGame(game));
   return [fromDbGame(dbGame), dbGame.id];
 };

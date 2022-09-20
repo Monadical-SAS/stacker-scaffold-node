@@ -7,5 +7,7 @@ export const toGameResponse = (id: GameId, game: Game): GameResponse => ({
   currentPlayer: game.nextPlayer(),
   possibleCoords: game.possibleCoords(),
   winner: game.tryWinner(),
+  playerOneName: game.playerOneName,
+  playerTwoName: game.playerTwoName,
   id,
 });
