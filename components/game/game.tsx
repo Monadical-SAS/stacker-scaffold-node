@@ -4,6 +4,7 @@ import { Cell, X, Y } from "./types";
 import { useCallback, useMemo } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
+import { CopyButton } from "./copyButton";
 
 interface WithOnMove {
   onMove: (ci: X, ri: Y) => void;
@@ -114,9 +115,10 @@ export const Stacker = () => {
   // if (error) return <div>{error}</div>;
   if (!game) return <div>No game (platform PS?)</div>;
   return (
-    <>
+    <div className="stacker-container">
       {game.winner ? <div>Winner: {game.winner}</div> : null}
       <Board onMove={handleOnMove} game={game!} />
-    </>
+      <CopyButton textToCopy={game.id} buttonText={"Copy Game ID!!"} />
+    </div>
   );
 };
