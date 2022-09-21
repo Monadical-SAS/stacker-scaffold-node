@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Coords, GameId, PlayerName } from "./types";
+import { Coords, GameId, Player } from "./types";
 import { subscribeGame } from "./api/ws/client";
 
 const Context = createContext<{
@@ -32,7 +32,7 @@ export const GameContextProvider = ({
   children,
 }: {
   id: GameId;
-  player: PlayerName;
+  player: Player;
   children: ReactNode;
 }) => {
   const [game, setGame] = useState<GameResponse | undefined>();

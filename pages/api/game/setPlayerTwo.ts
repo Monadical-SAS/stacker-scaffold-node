@@ -10,7 +10,7 @@ export default async function handler(
 ) {
   const gameId = req.body.gameId;
   const game = await getGame(gameId);
-  game.setPlayerName(req.body.playerTwo, 2);
+  game.setPlayerName(2, req.body.playerTwo);
   const dbGame = await saveDbGame(gameId, toDbGame(game));
   res.status(200).json(dbGame.id);
 }

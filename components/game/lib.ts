@@ -12,7 +12,6 @@ import {
   PossibleCoords,
   X,
   Y,
-  PlayerName,
 } from "./types";
 
 const SIDE = 7;
@@ -77,14 +76,10 @@ const diagonalRIteration = (side: number): Coords[][] => {
 
 export class Game {
   field: Field;
-  playerOneName: PlayerName;
-  playerTwoName: PlayerName;
+  playerOneName: Player;
+  playerTwoName: Player;
 
-  constructor(
-    field?: Field,
-    playerOneName?: PlayerName,
-    playerTwoName?: PlayerName
-  ) {
+  constructor(field?: Field, playerOneName?: Player, playerTwoName?: Player) {
     this.field = field || initialField();
     this.playerOneName = playerOneName || undefined;
     this.playerTwoName = playerTwoName || undefined;
@@ -115,7 +110,7 @@ export class Game {
     return this.field;
   }
 
-  tryWinner(): PlayerName | null {
+  tryWinner(): Player | null {
     for (const f of [
       rowIteration,
       columnIteration,
@@ -137,17 +132,17 @@ export class Game {
             currentCount = 1;
           }
           const won = currentPlayer && currentCount >= WIN_LEN;
-          if (won) return currentPlayer as PlayerName;
+          if (won) return currentPlayer as Player;
         }
       }
     }
     return null;
   }
 
-  nextPlayer(): PlayerName {
+  nextPlayer(): Player {
     return this.field.flat().filter((v) => v !== 0).length % 2 === 0
-      ? (this.playerOneName as PlayerName)
-      : (this.playerTwoName as PlayerName);
+      ? (this.playerOneName as Player)
+      : (this.playerTwoName as Player);
   }
 
   areCoordsValid(coords: Coords) {
@@ -156,7 +151,7 @@ export class Game {
     );
   }
 
-  setPlayerName(playerName: PlayerName, player: number) {
+  setPlayerName(player: number, playerName: Player) {
     if (player === 1) {
       this.playerOneName = playerName;
     } else if (player === 2) {

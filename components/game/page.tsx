@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import styled from "styled-components";
 
-import { GameId, PlayerName } from "./types";
+import { GameId, Player } from "./types";
 import { Stacker } from "./game";
 import { GameContextProvider } from "./context";
 
@@ -15,7 +15,7 @@ export const GamePage = () => {
     gameId: GameId;
     player: string;
   };
-  const player = playerParam as PlayerName;
+  const player = playerParam as Player;
   if (!gameId) {
     return <div>No game id</div>;
   }

@@ -1,6 +1,6 @@
 import { useGame } from "./api/useGame";
 import { useMove } from "./api/useMove";
-import { Cell, X, Y, PlayerName } from "./types";
+import { Cell, X, Y, Player } from "./types";
 import { useCallback, useMemo } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
@@ -14,8 +14,8 @@ interface CellProps extends WithOnMove {
   columnIndex: X;
   player: Cell;
   available: boolean;
-  playerOneName: PlayerName;
-  playerTwoName: PlayerName;
+  playerOneName: Player;
+  playerTwoName: Player;
 }
 
 const Cell = ({

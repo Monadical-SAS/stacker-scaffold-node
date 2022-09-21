@@ -1,14 +1,14 @@
 import { useCallback, useState } from "react";
-import { GameId, PlayerName } from "../types";
+import { GameId, Player } from "../types";
 
 export const useInitGame = () => {
   const [loading, setLoading] = useState(false);
-  const init = useCallback(async (PlayerOneName: PlayerName) => {
+  const init = useCallback(async (playerOneName: Player) => {
     setLoading(true);
     try {
       const res = await fetch("/api/game/init", {
         method: "POST",
-        body: JSON.stringify({ playerOne: PlayerOneName }),
+        body: JSON.stringify({ playerOne: playerOneName }),
         headers: {
           "Content-Type": "application/json",
         },

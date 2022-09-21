@@ -1,20 +1,16 @@
 import { useRouter } from "next/router";
 import React, { SyntheticEvent, useCallback, useState } from "react";
-import { GameId, PlayerName } from "./game/types";
+import { GameId, Player } from "./game/types";
 import { useInitGame } from "./game/api/useInitGame";
 
 const useRedirectToGame = () => {
   const router = useRouter();
   return useCallback(
-    (
-      gameId: GameId,
-      playerOneName?: PlayerName,
-      playerTwoName?: PlayerName
-    ) => {
+    async (gameId: GameId, playerOneName?: Player, playerTwoName?: Player) => {
       if (playerOneName !== undefined) {
         router.push(`/game/${gameId}/${playerOneName}`);
       } else if (playerTwoName !== undefined) {
-        const res = fetch("/api/game/setPlayerTwo", {
+        const res = await fetch("/api/game/setPlayerTwo", {
           method: "POST",
           body: JSON.stringify({
             playerTwo: playerTwoName,
@@ -24,7 +20,7 @@ const useRedirectToGame = () => {
             "Content-Type": "application/json",
           },
         });
-        if (!res.ok) {
+        if (res.ok) {
           router.push(`/game/${gameId}/${playerTwoName}`);
         }
       }
@@ -36,7 +32,7 @@ const useRedirectToGame = () => {
 const useCreateGame = () => {
   const { mutate, loading } = useInitGame();
   return useCallback(
-    async (playerForNewGame: PlayerName) => {
+    async (playerForNewGame: Player) => {
       if (loading) return;
       return mutate(playerForNewGame);
     },
@@ -50,7 +46,6 @@ export function HomePage() {
   const [playerForNewGameInput, setPlayerForNewGame] = useState("");
   const handlePlayerForNewGameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(e.currentTarget.value);
       setPlayerForNewGame(e.currentTarget.value as any);
     },
     [setPlayerForNewGame]
@@ -61,8 +56,8 @@ export function HomePage() {
     },
     [setPlayerForExistingGame]
   );
-  const playerForNewGame = playerForNewGameInput as PlayerName;
-  const playerForExistingGame = playerForExistingGameInput as PlayerName;
+  const playerForNewGame = playerForNewGameInput as Player;
+  const playerForExistingGame = playerForExistingGameInput as Player;
   const [idOfExistingGame, setIdOfExistingGame] = useState("");
   const createGame = useCreateGame();
   const handleJoinGameSubmit = useCallback(
