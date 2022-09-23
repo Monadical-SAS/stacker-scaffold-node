@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import React, { SyntheticEvent, useCallback, useState } from "react";
 import { GameId, Player } from "./game/types";
 import { useInitGame } from "./game/api/useInitGame";
+import { showMessage } from "./game/game";
 
 const useRedirectToGame = () => {
   const router = useRouter();
@@ -63,8 +64,12 @@ export function HomePage() {
   const handleJoinGameSubmit = useCallback(
     async (e: SyntheticEvent) => {
       e.preventDefault();
-      const gameId = await createGame(playerForNewGame);
-      redirectToGame(gameId!, playerForNewGame, undefined);
+      if (playerForNewGame === "" || playerForNewGame === undefined ){
+        showMessage(`Please enter a valid username!`);
+      } else {
+        const gameId = await createGame(playerForNewGame);
+        redirectToGame(gameId!, playerForNewGame, undefined);
+      }
     },
     [createGame, playerForNewGame, redirectToGame]
   );
@@ -72,11 +77,15 @@ export function HomePage() {
     async (e: SyntheticEvent) => {
       e.preventDefault();
       if (!idOfExistingGame) return;
-      redirectToGame(
-        idOfExistingGame as GameId,
-        undefined,
-        playerForExistingGame
-      );
+      if (playerForExistingGame === "" || playerForExistingGame === undefined ){
+        showMessage(`Please enter a valid username!`);
+      } else {
+        redirectToGame(
+          idOfExistingGame as GameId,
+          undefined,
+          playerForExistingGame
+        );
+      }
     },
     [playerForExistingGame, idOfExistingGame, redirectToGame]
   );
