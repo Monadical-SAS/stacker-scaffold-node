@@ -9,5 +9,6 @@ export const toGameResponse = (id: GameId, game: Game): GameResponse => ({
   winner: game.tryWinner(),
   playerOneName: game.playerOneName,
   playerTwoName: game.playerTwoName,
+  gameType: game.gameType,
   id,
 });

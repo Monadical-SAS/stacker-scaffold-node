@@ -1,7 +1,35 @@
 import { useRouter } from "next/router";
 import React, { SyntheticEvent, useCallback, useState } from "react";
-import { GameId, Player } from "./game/types";
+import { GameId, GameType, Player } from "./game/types";
 import { useInitGame } from "./game/api/useInitGame";
+
+const setPlayerTwoName = async (gameId: GameId, playerTwoName?: Player) => {
+  const res = await fetch("/api/game/setPlayerTwo", {
+    method: "POST",
+    body: JSON.stringify({
+      playerTwo: playerTwoName,
+      gameId: gameId,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};
+
+const setGameMode = async (gameId: GameId, gameType: GameType) => {
+  const res = await fetch("/api/game/setGameType", {
+    method: "POST",
+    body: JSON.stringify({
+      gameType,
+      gameId,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return res;
+};
 
 const useRedirectToGame = () => {
   const router = useRouter();
@@ -10,16 +38,7 @@ const useRedirectToGame = () => {
       if (playerOneName !== undefined) {
         router.push(`/game/${gameId}/${playerOneName}`);
       } else if (playerTwoName !== undefined) {
-        const res = await fetch("/api/game/setPlayerTwo", {
-          method: "POST",
-          body: JSON.stringify({
-            playerTwo: playerTwoName,
-            gameId: gameId,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await setPlayerTwoName(gameId, playerTwoName);
         if (res.ok) {
           router.push(`/game/${gameId}/${playerTwoName}`);
         }
@@ -60,10 +79,21 @@ export function HomePage() {
   const playerForExistingGame = playerForExistingGameInput as Player;
   const [idOfExistingGame, setIdOfExistingGame] = useState("");
   const createGame = useCreateGame();
+  const handleAutomaticGameSubmit = useCallback(
+    async (e: SyntheticEvent) => {
+      e.preventDefault();
+      const gameId = await createGame(playerForNewGame);
+      await setGameMode(gameId!, "automatic" as GameType);
+      await setPlayerTwoName(gameId!, "machine" as Player);
+      redirectToGame(gameId!, playerForNewGame, undefined);
+    },
+    [createGame, playerForNewGame, redirectToGame]
+  );
   const handleJoinGameSubmit = useCallback(
     async (e: SyntheticEvent) => {
       e.preventDefault();
       const gameId = await createGame(playerForNewGame);
+      await setGameMode(gameId!, "twoPlayerGame" as GameType);
       redirectToGame(gameId!, playerForNewGame, undefined);
     },
     [createGame, playerForNewGame, redirectToGame]
@@ -84,6 +114,20 @@ export function HomePage() {
     <div className="App">
       <h1 id="main-title">Side Stacker</h1>
       <div className="home-actions">
+        <form className="join-game" onSubmit={handleAutomaticGameSubmit}>
+          <div className="form-group">
+            <input
+              placeholder="Username"
+              type="text"
+              name="playerOne"
+              onChange={handlePlayerForNewGameChange}
+            />
+            <button type="submit" className="start-game">
+              Play with bot
+            </button>
+          </div>
+        </form>
+        <p>-- or --</p>
         <form className="join-game" onSubmit={handleJoinGameSubmit}>
           <div className="form-group">
             <input

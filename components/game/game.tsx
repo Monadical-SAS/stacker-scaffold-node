@@ -1,12 +1,12 @@
 import { useGame } from "./api/useGame";
 import { useMove } from "./api/useMove";
-import { Cell, X, Y, Player } from "./types";
-import { useCallback, useMemo } from "react";
+import { Cell, X, Y, Player, GameType } from "./types";
+import { useCallback, useMemo, useEffect } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
 
 interface WithOnMove {
-  onMove: (ci: X, ri: Y) => void;
+  onMove: (ci: X, ri: Y, currentPlayer: Player, gameType: GameType) => void;
 }
 
 interface CellProps extends WithOnMove {
@@ -16,6 +16,7 @@ interface CellProps extends WithOnMove {
   available: boolean;
   playerOneName: Player;
   playerTwoName: Player;
+  gameType: GameType;
 }
 
 const Cell = ({
@@ -26,9 +27,10 @@ const Cell = ({
   available,
   playerOneName,
   playerTwoName,
+  gameType,
 }: CellProps) => {
   const handleClick = useCallback(() => {
-    onMove(columnIndex, rowIndex);
+    onMove(columnIndex, rowIndex, playerOneName, gameType);
   }, [onMove, columnIndex, rowIndex]);
   return (
     <div
@@ -71,10 +73,23 @@ export const Board = ({
     (x: X, y: Y) => {
       if (!possibleCoords.find(({ x: px, y: py }) => px === x && py === y))
         return; // TODO left/right computation
-      onMove(x, y);
+      onMove(x, y, game.currentPlayer, game.gameType);
     },
     [possibleCoords, onMove]
   );
+
+  const randomMove = useCallback(() => {
+    const random = Math.floor(Math.random() * possibleCoords.length);
+    const randomCoord = possibleCoords[random];
+    onMove(randomCoord.x, randomCoord.y, game.currentPlayer, game.gameType);
+  }, [possibleCoords, onMove]);
+
+  useEffect(() => {
+    if (game.currentPlayer === "machine") {
+      randomMove();
+    }
+  }, [game.currentPlayer]);
+
   return (
     <div className="board">
       {Array.from(Array(game.field.length).keys()).map((ri) => (
@@ -92,6 +107,7 @@ export const Board = ({
                 available={isPossible(x, y)}
                 playerOneName={game.playerOneName}
                 playerTwoName={game.playerTwoName}
+                gameType={game.gameType}
               />
             );
           })}
@@ -105,11 +121,15 @@ const useOnMove = () => {
   const { mutate: makeMove, error } = useMove();
   return [
     useCallback(
-      (x: X, y: Y) => {
-        makeMove({
-          x,
-          y,
-        });
+      (x: X, y: Y, currentPlayer: Player, gameType: GameType) => {
+        makeMove(
+          {
+            x,
+            y,
+          },
+          currentPlayer,
+          gameType
+        );
       },
       [makeMove]
     ),

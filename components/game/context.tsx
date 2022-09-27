@@ -7,12 +7,12 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Coords, GameId, Player } from "./types";
+import { Coords, GameId, GameType, Player } from "./types";
 import { subscribeGame } from "./api/ws/client";
 
 const Context = createContext<{
   game?: GameResponse;
-  move: (cs: Coords) => void;
+  move: (cs: Coords, currentPlayer: Player, gameType: GameType) => void;
   isLoading: boolean;
   isMoving: boolean;
   moveError?: string;
@@ -39,6 +39,7 @@ export const GameContextProvider = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [moveError, setMoveError] = useState<string | undefined>();
+
   useEffect(() => {
     setIsLoading(true);
     fetch(`/api/game/${id}`)
@@ -65,13 +66,15 @@ export const GameContextProvider = ({
   }, [id]);
 
   const move = useCallback(
-    (coords: Coords) => {
+    (coords: Coords, currentPlayer: Player, gameType: GameType) => {
       setIsMoving(true);
       setMoveError(undefined);
+      console.log(gameType);
+      const playerTurn = gameType === "automatic" ? currentPlayer : player;
       fetch("/api/game/move", {
         body: JSON.stringify({
           coords,
-          player,
+          player: playerTurn,
           gameId: id,
         } as MoveInput),
         method: "POST",

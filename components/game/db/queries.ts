@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { GameId, Player } from "../types";
+import { GameId, GameType, Player } from "../types";
 import { DbGame, DbGameUpdate } from "./types";
 import { v4 as uuidv4 } from "uuid";
 const prisma = new PrismaClient();
@@ -16,6 +16,7 @@ export const queryGame = async (id: GameId): Promise<DbGame | null> => {
     id: res.id as GameId,
     playerOneName: res.playerOneName as Player,
     playerTwoName: res.playerTwoName as Player,
+    gameType: res.gameType as GameType,
   };
 };
 
@@ -33,5 +34,6 @@ export const saveGame = async (
     id: res.id as GameId,
     playerOneName: res.playerOneName as Player,
     playerTwoName: res.playerTwoName as Player,
+    gameType: res.gameType as GameType,
   };
 };

@@ -14,4 +14,5 @@ model Game {
   field     String
   playerOneName String?
   playerTwoName String?
+  gameType String?
 }

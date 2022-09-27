@@ -20,5 +20,8 @@ export type Cell = Player | Empty;
 export type Field = Cell[][];
 export type GameId = Brand<string, "GameId">;
 export type PlayerName = Brand<string, "PlayerName">;
+export type TwoPlayersGame = Brand<string, "twoPlayerGame">;
+export type AutomaticMode = Brand<string, "automatic">;
+export type GameType = AutomaticMode | TwoPlayersGame;
 
 export type PossibleCoords = Coords[];

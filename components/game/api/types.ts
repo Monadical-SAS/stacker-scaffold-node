@@ -1,4 +1,11 @@
-import { Field, GameId, Move, Player, PossibleCoords } from "../types";
+import {
+  Field,
+  GameId,
+  GameType,
+  Move,
+  Player,
+  PossibleCoords,
+} from "../types";
 
 export interface GameResponse {
   field: Field;
@@ -8,6 +15,7 @@ export interface GameResponse {
   id: GameId;
   playerOneName: Player;
   playerTwoName: Player;
+  gameType: GameType;
 }
 
 export interface GameErrorResponse {
