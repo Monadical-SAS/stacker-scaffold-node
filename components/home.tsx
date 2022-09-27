@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import React, { SyntheticEvent, useCallback, useState } from "react";
 import { GameId, GameType, Player } from "./game/types";
 import { useInitGame } from "./game/api/useInitGame";
+import { AUTOMATICMODE, AUTOMATICPLAYERNAME } from "./game/constants";
 
 const setPlayerTwoName = async (gameId: GameId, playerTwoName?: Player) => {
   const res = await fetch("/api/game/setPlayerTwo", {
@@ -83,8 +84,8 @@ export function HomePage() {
     async (e: SyntheticEvent) => {
       e.preventDefault();
       const gameId = await createGame(playerForNewGame);
-      await setGameMode(gameId!, "automatic" as GameType);
-      await setPlayerTwoName(gameId!, "machine" as Player);
+      await setGameMode(gameId!, AUTOMATICMODE);
+      await setPlayerTwoName(gameId!, AUTOMATICPLAYERNAME);
       redirectToGame(gameId!, playerForNewGame, undefined);
     },
     [createGame, playerForNewGame, redirectToGame]
