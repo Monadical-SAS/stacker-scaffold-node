@@ -69,7 +69,6 @@ export const GameContextProvider = ({
     (coords: Coords, currentPlayer: Player, gameType: GameType) => {
       setIsMoving(true);
       setMoveError(undefined);
-      console.log(gameType);
       const playerTurn = gameType === "automatic" ? currentPlayer : player;
       fetch("/api/game/move", {
         body: JSON.stringify({

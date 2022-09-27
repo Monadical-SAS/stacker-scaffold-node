@@ -8,7 +8,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GameId>
 ) {
-  console.log(req.body);
   const gameId = req.body.gameId;
   const game = await getGame(gameId);
   game.setPlayerName(2, req.body.playerTwo);
