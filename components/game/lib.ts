@@ -7,6 +7,7 @@ import {
   Coords,
   Empty,
   Field,
+  GameType,
   Move,
   Player,
   PossibleCoords,
@@ -78,11 +79,18 @@ export class Game {
   field: Field;
   playerOneName: Player;
   playerTwoName: Player;
+  gameType: GameType;
 
-  constructor(field?: Field, playerOneName?: Player, playerTwoName?: Player) {
+  constructor(
+    field?: Field,
+    playerOneName?: Player,
+    playerTwoName?: Player,
+    gameType?: GameType
+  ) {
     this.field = field || initialField();
     this.playerOneName = playerOneName || undefined;
     this.playerTwoName = playerTwoName || undefined;
+    this.gameType = gameType || undefined;
   }
 
   possibleCoords(): PossibleCoords {
@@ -157,5 +165,9 @@ export class Game {
     } else if (player === 2) {
       this.playerTwoName = playerName;
     }
+  }
+
+  setGameType(gameType: GameType) {
+    this.gameType = gameType;
   }
 }
