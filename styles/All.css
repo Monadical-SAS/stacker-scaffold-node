@@ -145,3 +145,12 @@ h1 {
 .unavailable {
     background-color: #b4b0b0;
 }
+
+.copy-button {
+    color: white;
+    background-color: #0ab171;
+    padding: 20px;
+    margin-top: 10px;
+    align-self: center;
+    justify-self: center;
+}

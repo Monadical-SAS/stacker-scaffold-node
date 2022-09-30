@@ -4,6 +4,7 @@ import { Cell, X, Y, Player } from "./types";
 import { useCallback, useEffect, useMemo } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
+import { CopyButton } from "./copyButton";
 import { useRouter } from "next/router";
 
 interface WithOnMove {
@@ -145,6 +146,7 @@ export const Stacker = () => {
       <div>
         <h1 id="main-title">Side Stacker</h1>
         <Board onMove={handleOnMove} game={game!} />
+        <CopyButton textToCopy={game.id} buttonText={"Copy Game ID!!"} />
       </div>
     </div>
   );
