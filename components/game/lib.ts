@@ -76,9 +76,13 @@ const diagonalRIteration = (side: number): Coords[][] => {
 
 export class Game {
   field: Field;
+  playerOneName: Player;
+  playerTwoName: Player;
 
-  constructor(field?: Field) {
+  constructor(field?: Field, playerOneName?: Player, playerTwoName?: Player) {
     this.field = field || initialField();
+    this.playerOneName = playerOneName || undefined;
+    this.playerTwoName = playerTwoName || undefined;
   }
 
   possibleCoords(): PossibleCoords {
@@ -137,13 +141,21 @@ export class Game {
 
   nextPlayer(): Player {
     return this.field.flat().filter((v) => v !== 0).length % 2 === 0
-      ? (1 as Player)
-      : (2 as Player);
+      ? (this.playerOneName as Player)
+      : (this.playerTwoName as Player);
   }
 
   areCoordsValid(coords: Coords) {
     return !!this.possibleCoords().find(
       (cs) => cs.x === coords.x && cs.y === coords.y
     );
+  }
+
+  setPlayerName(player: number, playerName: Player) {
+    if (player === 1) {
+      this.playerOneName = playerName;
+    } else if (player === 2) {
+      this.playerTwoName = playerName;
+    }
   }
 }

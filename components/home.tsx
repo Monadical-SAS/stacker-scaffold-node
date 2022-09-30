@@ -1,14 +1,30 @@
 import { useRouter } from "next/router";
 import React, { SyntheticEvent, useCallback, useState } from "react";
 import { GameId, Player } from "./game/types";
-import { PLAYER1, PLAYER2 } from "./game/constants";
 import { useInitGame } from "./game/api/useInitGame";
+import { showMessage } from "./game/game";
 
 const useRedirectToGame = () => {
   const router = useRouter();
   return useCallback(
-    (gameId: GameId, player: Player) => {
-      router.push(`/game/${gameId}/${player}`);
+    async (gameId: GameId, playerOneName?: Player, playerTwoName?: Player) => {
+      if (playerOneName !== undefined) {
+        router.push(`/game/${gameId}/${playerOneName}`);
+      } else if (playerTwoName !== undefined) {
+        const res = await fetch("/api/game/setPlayerTwo", {
+          method: "POST",
+          body: JSON.stringify({
+            playerTwo: playerTwoName,
+            gameId: gameId,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (res.ok) {
+          router.push(`/game/${gameId}/${playerTwoName}`);
+        }
+      }
     },
     [router]
   );
@@ -16,42 +32,44 @@ const useRedirectToGame = () => {
 
 const useCreateGame = () => {
   const { mutate, loading } = useInitGame();
-  return useCallback(async () => {
-    if (loading) return;
-    return mutate();
-  }, [mutate, loading]);
+  return useCallback(
+    async (playerForNewGame: Player) => {
+      if (loading) return;
+      return mutate(playerForNewGame);
+    },
+    [mutate, loading]
+  );
 };
 
 export function HomePage() {
   const redirectToGame = useRedirectToGame();
-  const [playerForExistingGameInput, setPlayerForExistingGame] = useState(
-    `${PLAYER1}`
-  );
-  const [playerForNewGameInput, setPlayerForNewGame] = useState(`${PLAYER1}`);
+  const [playerForExistingGameInput, setPlayerForExistingGame] = useState("");
+  const [playerForNewGameInput, setPlayerForNewGame] = useState("");
   const handlePlayerForNewGameChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       setPlayerForNewGame(e.currentTarget.value as any);
     },
     [setPlayerForNewGame]
   );
   const handlePlayerForExistingGameChange = useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       setPlayerForExistingGame(e.currentTarget.value as any);
     },
     [setPlayerForExistingGame]
   );
-  const playerForNewGame = parseInt(playerForNewGameInput, 10) as Player;
-  const playerForExistingGame = parseInt(
-    playerForExistingGameInput!,
-    10
-  ) as Player;
+  const playerForNewGame = playerForNewGameInput as Player;
+  const playerForExistingGame = playerForExistingGameInput as Player;
   const [idOfExistingGame, setIdOfExistingGame] = useState("");
   const createGame = useCreateGame();
   const handleJoinGameSubmit = useCallback(
     async (e: SyntheticEvent) => {
       e.preventDefault();
-      const gameId = await createGame();
-      redirectToGame(gameId!, playerForNewGame);
+      if (playerForNewGame === "") {
+        showMessage(`Please enter a valid username!`);
+      } else {
+        const gameId = await createGame(playerForNewGame);
+        redirectToGame(gameId!, playerForNewGame, undefined);
+      }
     },
     [createGame, playerForNewGame, redirectToGame]
   );
@@ -59,7 +77,15 @@ export function HomePage() {
     async (e: SyntheticEvent) => {
       e.preventDefault();
       if (!idOfExistingGame) return;
-      redirectToGame(idOfExistingGame as GameId, playerForExistingGame);
+      if (playerForExistingGame === "") {
+        showMessage(`Please enter a valid username!`);
+      } else {
+        redirectToGame(
+          idOfExistingGame as GameId,
+          undefined,
+          playerForExistingGame
+        );
+      }
     },
     [playerForExistingGame, idOfExistingGame, redirectToGame]
   );
@@ -69,13 +95,12 @@ export function HomePage() {
       <div className="home-actions">
         <form className="join-game" onSubmit={handleJoinGameSubmit}>
           <div className="form-group">
-            <select
-              defaultValue={playerForNewGameInput}
+            <input
+              placeholder="Username"
+              type="text"
+              name="playerOne"
               onChange={handlePlayerForNewGameChange}
-            >
-              <option value={`${PLAYER1}`}>First Player</option>
-              <option value={`${PLAYER2}`}>Second Player</option>
-            </select>
+            />
             <button type="submit" className="start-game">
               Start New Game
             </button>
@@ -84,13 +109,12 @@ export function HomePage() {
         <p>-- or --</p>
         <form className="join-game" onSubmit={handleRedirectToGame}>
           <div className="form-group">
-            <select
-              defaultValue={playerForExistingGameInput}
+            <input
+              placeholder="Username"
+              type="text"
+              name="playerTwo"
               onChange={handlePlayerForExistingGameChange}
-            >
-              <option value={`${PLAYER1}`}>First Player</option>
-              <option value={`${PLAYER2}`}>Second Player</option>
-            </select>
+            />
             <input
               type="text"
               className="form-control"

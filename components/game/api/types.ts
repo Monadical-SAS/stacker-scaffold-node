@@ -6,6 +6,8 @@ export interface GameResponse {
   possibleCoords: PossibleCoords;
   winner: Player | null;
   id: GameId;
+  playerOneName: Player;
+  playerTwoName: Player;
 }
 
 export interface GameErrorResponse {

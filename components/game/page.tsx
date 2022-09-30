@@ -15,7 +15,7 @@ export const GamePage = () => {
     gameId: GameId;
     player: string;
   };
-  const player = parseInt(playerParam, 10) as Player;
+  const player = playerParam as Player;
   if (!gameId) {
     return <div>No game id</div>;
   }

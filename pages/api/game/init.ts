@@ -8,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GameId>
 ) {
-  const [game, id] = await initGame();
+  const [game, id] = await initGame(req.body.playerOne);
   gameBus.value.publishGame(toGameResponse(id, game));
   res.status(200).json(id);
 }

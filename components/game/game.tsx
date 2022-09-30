@@ -1,10 +1,11 @@
 import { useGame } from "./api/useGame";
 import { useMove } from "./api/useMove";
-import { Cell, X, Y } from "./types";
-import { useCallback, useMemo } from "react";
+import { Cell, X, Y, Player } from "./types";
+import { useCallback, useEffect, useMemo } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
 import { CopyButton } from "./copyButton";
+import { useRouter } from "next/router";
 
 interface WithOnMove {
   onMove: (ci: X, ri: Y) => void;
@@ -15,6 +16,15 @@ interface CellProps extends WithOnMove {
   columnIndex: X;
   player: Cell;
   available: boolean;
+  playerOneName: Player;
+  playerTwoName: Player;
+}
+
+export function showMessage(message: string, callback?: () => void) {
+  window.setTimeout(() => {
+    window.alert(message);
+    if (callback) callback();
+  }, 50);
 }
 
 const Cell = ({
@@ -23,6 +33,8 @@ const Cell = ({
   onMove,
   player,
   available,
+  playerOneName,
+  playerTwoName,
 }: CellProps) => {
   const handleClick = useCallback(() => {
     onMove(columnIndex, rowIndex);
@@ -35,7 +47,11 @@ const Cell = ({
         {
           empty: !player,
         },
-        player === 1 ? "red" : player === 2 ? "yellow" : null,
+        player === playerOneName
+          ? "red"
+          : player === playerTwoName
+          ? "yellow"
+          : null,
         !available && !player && "unavailable"
       )}
       onClick={handleClick}
@@ -83,6 +99,8 @@ export const Board = ({
                 onMove={handleOnMove}
                 player={game.field[ri][ci]}
                 available={isPossible(x, y)}
+                playerOneName={game.playerOneName}
+                playerTwoName={game.playerTwoName}
               />
             );
           })}
@@ -111,14 +129,25 @@ const useOnMove = () => {
 export const Stacker = () => {
   const { game, isLoading } = useGame();
   const [handleOnMove] = useOnMove();
+  const router = useRouter();
+  useEffect(() => {
+    if (game && game.winner) {
+      showMessage(`Player ${game.winner} wins!`, () => {
+        router.push("/");
+      });
+    }
+  }, [game]);
+
   if (isLoading) return <div>Loading...</div>;
   // if (error) return <div>{error}</div>;
   if (!game) return <div>No game (platform PS?)</div>;
   return (
     <div className="stacker-container">
-      {game.winner ? <div>Winner: {game.winner}</div> : null}
-      <Board onMove={handleOnMove} game={game!} />
-      <CopyButton textToCopy={game.id} buttonText={"Copy Game ID!!"} />
+      <div>
+        <h1 id="main-title">Side Stacker</h1>
+        <Board onMove={handleOnMove} game={game!} />
+        <CopyButton textToCopy={game.id} buttonText={"Copy Game ID!!"} />
+      </div>
     </div>
   );
 };
