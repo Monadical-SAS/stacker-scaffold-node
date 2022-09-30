@@ -5,11 +5,7 @@ export const CopyButton = (props: {
   buttonText: string;
 }) => {
   const handleClick = () => {
-    if ("clipboard" in navigator) {
-      navigator.clipboard.writeText(props.textToCopy);
-    } else {
-      return document.execCommand("copy", true, props.textToCopy);
-    }
+    navigator.clipboard.writeText(props.textToCopy);
   };
   return (
     <button className="copy-button" onClick={() => handleClick()}>
