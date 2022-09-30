@@ -64,7 +64,7 @@ export function HomePage() {
   const handleJoinGameSubmit = useCallback(
     async (e: SyntheticEvent) => {
       e.preventDefault();
-      if (playerForNewGame === "" || playerForNewGame === undefined ){
+      if (playerForNewGame === "") {
         showMessage(`Please enter a valid username!`);
       } else {
         const gameId = await createGame(playerForNewGame);
@@ -77,7 +77,7 @@ export function HomePage() {
     async (e: SyntheticEvent) => {
       e.preventDefault();
       if (!idOfExistingGame) return;
-      if (playerForExistingGame === "" || playerForExistingGame === undefined ){
+      if (playerForExistingGame === "") {
         showMessage(`Please enter a valid username!`);
       } else {
         redirectToGame(
