@@ -1,9 +1,10 @@
 import { useGame } from "./api/useGame";
 import { useMove } from "./api/useMove";
 import { Cell, X, Y, Player } from "./types";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import cx from "classnames";
 import { GameResponse } from "./api/types";
+import { useRouter } from "next/router";
 
 interface WithOnMove {
   onMove: (ci: X, ri: Y) => void;
@@ -16,6 +17,13 @@ interface CellProps extends WithOnMove {
   available: boolean;
   playerOneName: Player;
   playerTwoName: Player;
+}
+
+export function showMessage(message: string, callback?: () => void) {
+  window.setTimeout(() => {
+    window.alert(message);
+    if (callback) callback();
+  }, 50);
 }
 
 const Cell = ({
@@ -120,13 +128,24 @@ const useOnMove = () => {
 export const Stacker = () => {
   const { game, isLoading } = useGame();
   const [handleOnMove] = useOnMove();
+  const router = useRouter();
+  useEffect(() => {
+    if (game && game.winner) {
+      showMessage(`Player ${game.winner} wins!`, () => {
+        router.push("/");
+      });
+    }
+  }, [game]);
+
   if (isLoading) return <div>Loading...</div>;
   // if (error) return <div>{error}</div>;
   if (!game) return <div>No game (platform PS?)</div>;
   return (
-    <>
-      {game.winner ? <div>Winner: {game.winner}</div> : null}
-      <Board onMove={handleOnMove} game={game!} />
-    </>
+    <div className="stacker-container">
+      <div>
+        <h1 id="main-title">Side Stacker</h1>
+        <Board onMove={handleOnMove} game={game!} />
+      </div>
+    </div>
   );
 };
